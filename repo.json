@@ -1,0 +1,8 @@
+{
+  "name": "Repo de Commodore6evo",
+  "description": "Mis extensiones personalizadas para CloudStream",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/Commodore6evo/TestPlugins/builds/plugins.json"
+  ]
+}

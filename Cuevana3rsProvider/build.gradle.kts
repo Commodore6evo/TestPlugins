@@ -31,6 +31,7 @@ cloudstream {
 }
 
 android {
+    namespace = "com.commodore6evo.cuevana3rs"
     buildFeatures {
         buildConfig = true
         viewBinding = true
