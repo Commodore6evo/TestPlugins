@@ -1,0 +1,22 @@
+[
+    {
+        "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Korduene_Logo.png",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Commodore6evo/TestPlugins",
+        "fileSize": 20088,
+        "status": 1,
+        "language": "en",
+        "authors": [
+            "Cloudburst",
+            "Luna712"
+        ],
+        "tvTypes": [
+            "Movie"
+        ],
+        "version": 1,
+        "internalName": "Cuevana3rsProvider",
+        "description": "Lorem ipsum",
+        "url": "https://raw.githubusercontent.com/Commodore6evo/TestPlugins/builds/Cuevana3rsProvider.cs3",
+        "name": "Cuevana3rsProvider"
+    }
+]
