@@ -11,8 +11,9 @@ on:
       # choose your default branch
       - master
       - main
-    paths-ignore:
-      - '*.md'
+  workflow_dispatch:
+  paths-ignore:
+    - '*.md'
 
 jobs:
   build:
