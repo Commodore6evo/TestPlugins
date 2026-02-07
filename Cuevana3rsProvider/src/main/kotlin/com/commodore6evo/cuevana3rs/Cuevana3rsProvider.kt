@@ -63,7 +63,8 @@ class Cuevana3rsProvider : MainAPI() { // All providers must be an instance of M
         val embedUrl = document.select("script").map { it.data() }
             .find { it.contains("var videoUrls =") }
             ?.let { 
-                Regex("var videoUrls = \\['(.*?)'\\];").find(it)?.groupValues?.get(1)
+                // Regex handles both single and double quotes
+                Regex("var videoUrls\\s*=\\s*\\[[\"'](.*?)[\"']\\];").find(it)?.groupValues?.get(1)
             }
 
         return if (isMovie) {
@@ -92,8 +93,8 @@ class Cuevana3rsProvider : MainAPI() { // All providers must be an instance of M
     ): Boolean {
         if (!data.startsWith("http")) return false
 
-        val response = app.get(data).text
-        val dataLinkJson = Regex("let dataLink = (.*);").find(response)?.groupValues?.get(1) ?: return false
+        val response = app.get(data, referer = mainUrl).text
+        val dataLinkJson = Regex("let\\s+dataLink\\s*=\\s*(.*?);").find(response)?.groupValues?.get(1) ?: return false
         
         val dataLink = parseJson<List<DataLink>>(dataLinkJson)
         
@@ -101,10 +102,17 @@ class Cuevana3rsProvider : MainAPI() { // All providers must be an instance of M
             lang.sortedEmbeds.forEach { embed ->
                 val jwt = embed.link.split(".")
                 if (jwt.size == 3) {
-                    val payload = String(Base64.decode(jwt[1], Base64.DEFAULT))
-                    val finalUrl = parseJson<Payload>(payload).link
-                    
-                    loadExtractor(finalUrl, subtitleCallback, callback)
+                    try {
+                        val payload = String(Base64.decode(jwt[1], Base64.DEFAULT))
+                        // Clean backticks and potential escaped characters
+                        val finalUrl = parseJson<Payload>(payload).link.replace("`", "").trim()
+                        
+                        if (finalUrl.startsWith("http")) {
+                            loadExtractor(finalUrl, data, subtitleCallback, callback)
+                        }
+                    } catch (e: Exception) {
+                        // Log or ignore individual link failures
+                    }
                 }
             }
         }
@@ -113,15 +121,17 @@ class Cuevana3rsProvider : MainAPI() { // All providers must be an instance of M
     }
 
     data class DataLink(
+        val file_id: Int? = null,
         val video_language: String,
         val sortedEmbeds: List<Embed>
     )
-
+    
     data class Embed(
-        val servername: String,
-        val link: String
+        val servername: String? = null,
+        val link: String,
+        val type: String? = null
     )
-
+    
     data class Payload(
         val link: String
     )
